@@ -4,10 +4,10 @@
     "slug": "BurguersChop",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/initialImage.jpeg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/initialImage.jpeg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
