@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet, TextInput, ScrollView } from 'react-native';
 import Menu from '../components/Menu';
-import { Box, Image, View, HStack, Text, Accordion, VStack } from 'native-base';
+import { Box, Image, View, HStack, Text, Accordion, VStack, Spinner } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
-const data = [
+const dadosTopicos = [
   { title: 'Item 1', image: require('../assets/images/initialImage.jpeg') },
   { title: 'Item 2', image: require('../assets/images/initialImage.jpeg') },
   { title: 'Item 3', image: require('../assets/images/initialImage.jpeg') },
@@ -48,6 +48,29 @@ const topics = [
 ];
 
 export default function Initial() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('https://cdn-dev.preoday.com/challenge/menu')
+      .then(response => response.json())
+      .then(json => {
+        setData(json.sections);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error(error);
+        setLoading(false);
+      });
+  }, []);
+
+  // console.log('dado', data.sections[0].name)
+  // console.log('foto', data.sections[0].images[0].image)
+
+  if (loading) {
+    return <Spinner color="blue.500" />;
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <Menu/>
@@ -73,24 +96,24 @@ export default function Initial() {
       </View>
 
       <View style={styles.additionalContent}>
-        <HStack space={3} style={styles.itemContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
+          <HStack style={styles.itemContainer}>
             {data.map((item, index) => (
               <Box key={index} style={styles.itemBox}>
-                <Image source={item.image} style={styles.itemImage} alt={item.title} />
-                <Text style={styles.itemTitle}>{item.title}</Text>
+                <Image source={{uri:item.images[0].image}} style={styles.itemImage} alt={item.description} />
+                <Text style={styles.itemTitle}>{item.name}</Text>
               </Box>
             ))}
-          </ScrollView>
-        </HStack>
+          </HStack>
+        </ScrollView>
       </View>
 
       <View style={styles.accordionContainer}>
         <Accordion allowMultiple>
-          {topics.map((topic, index) => (
+          {data.map((topic, index) => (
             <Accordion.Item key={index}>
               <Accordion.Summary>
-                <Text>{topic.title}</Text>
+                <Text>{topic.name}</Text>
                 <Accordion.Icon />
               </Accordion.Summary>
               <Accordion.Details>
@@ -99,9 +122,9 @@ export default function Initial() {
                     <VStack style={styles.textContainer}>
                       <Text style={styles.subitemName}>{subitem.name}</Text>
                       <Text style={styles.subitemDescription}>{subitem.description}</Text>
-                      <Text style={styles.subitemValue}>{subitem.value}</Text>
+                      <Text style={styles.subitemValue}>{subitem.price}</Text>
                     </VStack>
-                    <Image source={subitem.image} style={styles.subitemImage} alt={subitem.name} />
+                    {subitem.images && ( <Image source={{uri:subitem.images[0].image}} style={styles.subitemImage} alt={subitem.name} />)}
                   </HStack>
                 ))}
               </Accordion.Details>
@@ -121,10 +144,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'flex-start',
+    paddingBottom: 100,
   },
   backgroundImage: {
     width: '100%',
-    height: "40%",
+    height: 130,
   },
   overlayImage: {
     width: '40%',
@@ -141,7 +165,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
     marginHorizontal: 20,
-    marginTop: -170,
+    marginTop: 10,
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -160,13 +184,11 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   additionalContent: {
-    marginTop: 20,
+    marginTop: 10,
     alignItems: 'center',
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  horizontalScroll: {
+    paddingHorizontal: 10,
   },
   itemContainer: {
     paddingHorizontal: 10,
@@ -174,8 +196,6 @@ const styles = StyleSheet.create({
   itemBox: {
     width: 150,
     height: 200,
-    borderRadius: 10,
-    marginHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: "#000",
@@ -188,7 +208,7 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: '60%',
-    height: '50%',
+    height: '45%',
     borderRadius: 50,
   },
   itemTitle: {
@@ -229,14 +249,8 @@ const styles = StyleSheet.create({
   },
   allergyInfoContainer: {
     width: '100%',
-    height: 67,
-    padding: 24,
-    gap: 10,
-    borderWidth: 1,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    height: 70,
     borderColor: '#EEEEEE',
-    opacity: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFF',
