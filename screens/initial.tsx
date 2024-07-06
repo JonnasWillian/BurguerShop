@@ -4,49 +4,6 @@ import Menu from '../components/Menu';
 import { Box, Image, View, HStack, Text, Accordion, VStack, Spinner } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
-const dadosTopicos = [
-  { title: 'Item 1', image: require('../assets/images/initialImage.jpeg') },
-  { title: 'Item 2', image: require('../assets/images/initialImage.jpeg') },
-  { title: 'Item 3', image: require('../assets/images/initialImage.jpeg') },
-];
-
-const topics = [
-  {
-    title: 'Topic 1',
-    items: [
-      {
-        name: 'Subitem 1',
-        description: 'Description of Subitem 1',
-        value: '$10',
-        image: require('../assets/images/initialImage.jpeg')
-      },
-      {
-        name: 'Subitem 2',
-        description: 'Description of Subitem 2',
-        value: '$20',
-        image: require('../assets/images/initialImage.jpeg')
-      },
-    ]
-  },
-  {
-    title: 'Topic 2',
-    items: [
-      {
-        name: 'Subitem 3',
-        description: 'Description of Subitem 3',
-        value: '$30',
-        image: require('../assets/images/initialImage.jpeg')
-      },
-      {
-        name: 'Subitem 4',
-        description: 'Description of Subitem 4',
-        value: '$40',
-        image: require('../assets/images/initialImage.jpeg')
-      },
-    ]
-  },
-];
-
 export default function Initial() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,12 +21,17 @@ export default function Initial() {
       });
   }, []);
 
-  // console.log('dado', data.sections[0].name)
-  // console.log('foto', data.sections[0].images[0].image)
-
   if (loading) {
     return <Spinner color="blue.500" />;
   }
+
+  const truncateDescription = (description) => {
+    if (!description) return '';
+    if (description.length > 50) {
+      return description.substring(0, 50) + '...';
+    }
+    return description;
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -121,10 +83,12 @@ export default function Initial() {
                   <HStack key={subindex} space={3} style={styles.subitemContainer}>
                     <VStack style={styles.textContainer}>
                       <Text style={styles.subitemName}>{subitem.name}</Text>
-                      <Text style={styles.subitemDescription}>{subitem.description}</Text>
-                      <Text style={styles.subitemValue}>{subitem.price}</Text>
+                      <Text style={styles.subitemDescription}>{truncateDescription(subitem.description)}</Text>
+                      <Text style={styles.subitemValue}>R$ {subitem?.price}</Text>
                     </VStack>
-                    {subitem.images && ( <Image source={{uri:subitem.images[0].image}} style={styles.subitemImage} alt={subitem.name} />)}
+                    {subitem.images && (
+                      <Image source={{uri:subitem.images[0].image}} style={styles.subitemImage} alt={subitem.name} />
+                    )}
                   </HStack>
                 ))}
               </Accordion.Details>
@@ -165,7 +129,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
     marginHorizontal: 20,
-    marginTop: 10,
+    marginTop: 20,
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -205,14 +169,16 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    marginHorizontal: 5,
   },
   itemImage: {
-    width: '60%',
-    height: '45%',
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 10,
+    resizeMode: "cover",
   },
   itemTitle: {
-    marginTop: 10,
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -230,9 +196,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   subitemImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 80,
+    height: 80,
     marginLeft: 10,
   },
   subitemName: {
