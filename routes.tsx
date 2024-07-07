@@ -1,17 +1,20 @@
-import React from "react";
-import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import Initial from "./screens/initial";
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Initial from './screens/initial';
+import ItemDetails from './screens/ItemDetails';
+import OrderSummary from './screens/OrderSummary';
 
-const Tab = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
-
-export default function Routes(){
-  return(
-    <NavigationContainer independent={true}>
-      <Tab.Navigator>
-        <Tab.Screen name="/" component={Initial as React.FC} options={{ headerShown: false }} />
-      </Tab.Navigator>
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Initial">
+        <Stack.Screen name="/" component={Initial as React.FC} options={{ headerShown: false }} />
+        <Stack.Screen name="ItemDetails" component={ItemDetails as React.FC} options={{ headerShown: false }} />
+        <Stack.Screen name="OrderSummary" component={OrderSummary as React.FC} options={{ headerShown: false }} />
+      </Stack.Navigator>
     </NavigationContainer>
-  )
+  );
 }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ImageBackground, StyleSheet, TextInput, ScrollView } from 'react-native';
+import { ImageBackground, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import Menu from '../components/Menu';
 import { Box, Image, View, HStack, Text, Accordion, VStack, Spinner } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function Initial() {
+export default function Initial({ navigation }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +59,7 @@ export default function Initial() {
 
       <View style={styles.additionalContent}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
-          <HStack style={styles.itemContainer}>
+          <HStack>
             {data.map((item, index) => (
               <Box key={index} style={styles.itemBox}>
                 <Image source={{uri:item.images[0].image}} style={styles.itemImage} alt={item.description} />
@@ -80,16 +80,21 @@ export default function Initial() {
               </Accordion.Summary>
               <Accordion.Details>
                 {topic.items.map((subitem, subindex) => (
-                  <HStack key={subindex} space={3} style={styles.subitemContainer}>
-                    <VStack style={styles.textContainer}>
-                      <Text style={styles.subitemName}>{subitem.name}</Text>
-                      <Text style={styles.subitemDescription}>{truncateDescription(subitem.description)}</Text>
-                      <Text style={styles.subitemValue}>R$ {subitem?.price}</Text>
-                    </VStack>
-                    {subitem.images && (
-                      <Image source={{uri:subitem.images[0].image}} style={styles.subitemImage} alt={subitem.name} />
-                    )}
-                  </HStack>
+                  <TouchableOpacity 
+                    key={subindex} 
+                    onPress={() => navigation.navigate('ItemDetails', { item: subitem })}
+                  >
+                    <HStack space={3} style={styles.subitemContainer}>
+                      <VStack style={styles.textContainer}>
+                        <Text style={styles.subitemName}>{subitem.name}</Text>
+                        <Text style={styles.subitemDescription}>{truncateDescription(subitem.description)}</Text>
+                        <Text style={styles.subitemValue}>R$ {subitem?.price}</Text>
+                      </VStack>
+                      {subitem.images && (
+                        <Image source={{uri:subitem.images[0].image}} style={styles.subitemImage} alt={subitem.name} />
+                      )}
+                    </HStack>
+                  </TouchableOpacity>
                 ))}
               </Accordion.Details>
             </Accordion.Item>
@@ -154,19 +159,12 @@ const styles = StyleSheet.create({
   horizontalScroll: {
     paddingHorizontal: 10,
   },
-  itemContainer: {
-    paddingHorizontal: 10,
-  },
   itemBox: {
     width: 150,
     height: 200,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     marginHorizontal: 5,
